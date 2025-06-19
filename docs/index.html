@@ -1,0 +1,52 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Mapa ICSH</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>#map { height: 100vh; margin: 0; }</style>
+</head>
+<body>
+  <div id="map"></div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    var map = L.map("map", {
+      minZoom: 5,
+      maxZoom: 10
+    }).setView([-35.6751, -71.543], 6);
+
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+      attribution: "&copy; OpenStreetMap contributors & CartoDB"
+    }).addTo(map);
+
+    fetch("icsh.geojson")
+      .then(response => response.json())
+      .then(data => {
+        L.geoJSON(data, {
+          style: function(feature) {
+            const colores = {
+              "Muy Baja prioridad": "#4575b4",
+              "Baja prioridad": "#91bfdb",
+              "Sin señales criticas": "#ffffbf",
+              "Monitoreo recomendado": "#fdae61",
+              "Alta prioridad": "#d73027",
+              "Sin datos": "#d3d3d3"
+            };
+            return {
+              color: "#444",
+              weight: 0.5,
+              fillColor: colores[feature.properties.categoria] || "#d3d3d3",
+              fillOpacity: 0.7
+            };
+          },
+          onEachFeature: function(feature, layer) {
+            layer.bindPopup(feature.properties.COMUNA + ": ICSH = " + feature.properties.ICSH);
+          }
+        }).addTo(map);
+      });
+  </script>
+</body>
+</html>
+
