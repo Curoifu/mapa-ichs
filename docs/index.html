@@ -43,16 +43,17 @@
     fetch("icsh.geojson")
       .then(response => response.json())
       .then(data => {
+        const colores = {
+          "Muy Baja prioridad": "#4575b4",
+          "Baja prioridad": "#91bfdb",
+          "Sin señales criticas": "#ffffbf",
+          "Monitoreo recomendado": "#fdae61",
+          "Alta prioridad": "#d73027",
+          "Sin datos": "#d3d3d3"
+        };
+
         L.geoJSON(data, {
           style: function(feature) {
-            const colores = {
-              "Muy Baja prioridad": "#4575b4",
-              "Baja prioridad": "#91bfdb",
-              "Sin señales criticas": "#ffffbf",
-              "Monitoreo recomendado": "#fdae61",
-              "Alta prioridad": "#d73027",
-              "Sin datos": "#d3d3d3"
-            };
             return {
               color: "#444",
               weight: 0.5,
@@ -68,7 +69,7 @@
         // Crear leyenda
         var legend = L.control({ position: "bottomright" });
         legend.onAdd = function (map) {
-          var div = L.DomUtil.create("div", "info legend");
+          var div = L.DomUtil.create("div", "legend");
           var categorias = [
             "Muy Baja prioridad",
             "Baja prioridad",
@@ -77,18 +78,10 @@
             "Alta prioridad",
             "Sin datos"
           ];
-          var colores = {
-            "Muy Baja prioridad": "#4575b4",
-            "Baja prioridad": "#91bfdb",
-            "Sin señales criticas": "#ffffbf",
-            "Monitoreo recomendado": "#fdae61",
-            "Alta prioridad": "#d73027",
-            "Sin datos": "#d3d3d3"
-          };
           div.innerHTML += "<h4>Prioridad ICSH</h4>";
           categorias.forEach(function (cat) {
             div.innerHTML +=
-              "<i style="background:" + colores[cat] + ""></i> " + cat + "<br>";
+              '<i style="background:' + colores[cat] + '"></i> ' + cat + "<br>";
           });
           return div;
         };
@@ -97,4 +90,5 @@
   </script>
 </body>
 </html>
+
 
