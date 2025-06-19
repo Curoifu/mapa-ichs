@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>Mapa ICSH con Leyenda Separada</title>
+  <title>Mapa ICHS CIT-UAI</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>
@@ -38,7 +38,7 @@
 <body>
   <div id="map"></div>
   <div class="legend-box" id="legend">
-    <h4>Prioridad ICSH</h4>
+    <h4>Indicador de Cambio Histórico de Sequía (ICHS)</h4>
     <div><i style="background:#4575b4"></i> Muy Baja prioridad</div>
     <div><i style="background:#91bfdb"></i> Baja prioridad</div>
     <div><i style="background:#ffffbf"></i> Sin señales criticas</div>
@@ -79,7 +79,7 @@
             };
           },
           onEachFeature: function(feature, layer) {
-            layer.bindPopup(feature.properties.COMUNA + ": ICSH = " + feature.properties.ICSH);
+            layer.bindPopup(feature.properties.COMUNA + ": ICHS = " + feature.properties.ICSH);
           }
         }).addTo(map);
       });
@@ -88,5 +88,6 @@
 </html>
 <<<<<<< HEAD
 =======
+
 
 >>>>>>> c3ef7f6f16d8e05b8cd07a0e69ad596188defff4
