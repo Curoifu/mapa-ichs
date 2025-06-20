@@ -8,34 +8,17 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>
     body { margin: 0; font-family: Arial, sans-serif; }
-    #map { height: 100vh; width: 100%; }
+    #map { position: absolute; top: 0; bottom: 0; right: 0; left: 300px; }
     #sidebar {
       position: absolute;
       top: 0;
       left: 0;
       width: 300px;
-      max-width: 80%;
       height: 100%;
-      background: white;
-      padding: 15px;
+      background: #f8f9fa;
+      padding: 20px;
       overflow-y: auto;
-      box-shadow: 2px 0 5px rgba(0,0,0,0.3);
-      transform: translateX(-100%);
-      transition: transform 0.3s ease;
-      z-index: 1000;
-    }
-    #sidebar.open { transform: translateX(0); }
-    #toggle-btn {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      z-index: 1100;
-      background: #007bff;
-      color: white;
-      border: none;
-      padding: 8px 12px;
-      cursor: pointer;
-      border-radius: 4px;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
     }
     .legend {
       background: white;
@@ -53,54 +36,27 @@
       margin-right: 8px;
       opacity: 0.7;
     }
-    img.explainer {
-      width: 100%;
-      margin: 10px 0;
-      border: 1px solid #ccc;
-    }
   </style>
 </head>
 <body>
-  <button id="toggle-btn">ℹ️ Info</button>
   <div id="sidebar">
     <h2>Indicador de Cambio Histórico de la Sequía (ICHS)</h2>
     <p><strong>¿Qué es?</strong><br>
-    El ICHS es un índice compuesto que resume la evolución histórica de la sequía en cada comuna de Chile, usando datos satelitales de los últimos 25 años.</p>
-
+    El ICHS resume la evolución histórica de la sequía en cada comuna de Chile, usando datos satelitales de los últimos 25 años.</p>
     <p><strong>¿Cómo se calcula?</strong><br>
-    Se basa en cuatro componentes:
-      <ul>
-        <li><strong>ISP promedio:</strong> severidad media anual.</li>
-        <li><strong>Tendencia:</strong> cambio en el tiempo del ISP.</li>
-        <li><strong>Área crítica:</strong> proporción del territorio con sequía severa.</li>
-        <li><strong>Persistencia:</strong> años consecutivos con sequía severa.</li>
-      </ul>
-    Cada componente se normaliza y pondera: 40% ISP, 30% Tendencia, 20% Área crítica, 10% Persistencia.</p>
-
-    <img class="explainer" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=" alt="Componentes del ICHS" />
-    <img class="explainer" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=" alt="Interpretación del ICHS" />
-    <img class="explainer" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=" alt="Flujo metodológico del ICHS" />
-
+    Se basa en cuatro componentes ponderados: ISP (40%), Tendencia (30%), Área crítica (20%), Persistencia (10%).</p>
     <p><strong>¿Cómo se interpreta?</strong><br>
     <ul>
-      <li><strong>ICHS > 1:</strong> Alta prioridad de intervención.</li>
-      <li><strong>ICHS ≈ 0:</strong> Condiciones promedio.</li>
-      <li><strong>ICHS < 0:</strong> Baja prioridad relativa.</li>
-    </ul>
-    </p>
-
+      <li><strong>ICHS > 1:</strong> Alta prioridad</li>
+      <li><strong>ICHS ≈ 0:</strong> Condiciones promedio</li>
+      <li><strong>ICHS < 0:</strong> Baja prioridad</li>
+    </ul></p>
     <p><strong>¿Para qué sirve?</strong><br>
-    Apoya la planificación hídrica, gestión del riesgo climático y priorización de inversiones.</p>
+    Apoya la planificación hídrica y la gestión del riesgo climático.</p>
   </div>
-
   <div id="map"></div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-    document.getElementById("toggle-btn").onclick = function() {
-      var sidebar = document.getElementById("sidebar");
-      sidebar.classList.toggle("open");
-    };
-
     var map = L.map("map", {
       minZoom: 5,
       maxZoom: 10
@@ -116,6 +72,8 @@
         L.geoJSON(data, {
           style: function(feature) {
             const colores = {
+              "Muy Baja prioridad": "#d9f0a3",
+              "Baja prioridad": "#addd8e",
               "Sin señales criticas": "#ffffbf",
               "Monitoreo recomendado": "#fdae61",
               "Alta prioridad": "#d73027",
@@ -135,24 +93,8 @@
 
         var legend = L.control({ position: "bottomright" });
         legend.onAdd = function (map) {
-          var div = L.DomUtil.create("div", "info legend");
-          var categorias = [
-            "Sin señales criticas",
-            "Monitoreo recomendado",
-            "Alta prioridad",
-            "Sin datos"
-          ];
-          var colores = {
-            "Sin señales criticas": "#ffffbf",
-            "Monitoreo recomendado": "#fdae61",
-            "Alta prioridad": "#d73027",
-            "Sin datos": "#d3d3d3"
-          };
-          div.innerHTML += "<h4>Prioridad ICSH</h4>";
-          categorias.forEach(function (cat) {
-            div.innerHTML +=
-              "<i style="background:" + colores[cat] + ""></i> " + cat + "<br>";
-          });
+          var div = L.DomUtil.create("div", "legend");
+          div.innerHTML = `<h4>Prioridad ICSH</h4><i style="background:#ffffbf"></i> Sin señales criticas<br><i style="background:#fdae61"></i> Monitoreo recomendado<br><i style="background:#d73027"></i> Alta prioridad<br>`;
           return div;
         };
         legend.addTo(map);
